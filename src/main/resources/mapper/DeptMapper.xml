@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fx.demo.order.mapper.DeptMapper">
+
+    <resultMap type="com.fx.demo.order.entity.Dept" id="DeptMap">
+        <result property="deptId" column="deptId" jdbcType="INTEGER"/>
+        <result property="deptName" column="dept_name" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="countDetpById" resultType="java.lang.Integer">
+        select count(*) from tb_dept where dept_id = #{deptId};
+    </select>
+
+    <select id="getAllDept" resultMap="DeptMap">
+        select * from tb_dept;
+    </select>
+
+
+</mapper>
+

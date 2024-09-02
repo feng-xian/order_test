@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fx.demo.order.mapper.OrderMapper">
+
+    <resultMap type="com.fx.demo.order.entity.Order" id="OrderMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="orderNo" column="order_no" jdbcType="VARCHAR"/>
+        <result property="orderType" column="order_type" jdbcType="INTEGER"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="handleDeptId" column="handle_dept_id" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="fenpaiTime" column="fenpai_time" jdbcType="TIMESTAMP"/>
+        <result property="isOverdue" column="is_verdue" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <insert id="save" keyProperty="id" useGeneratedKeys="true">
+            insert into tb_order(order_no, order_type, title, content, create_name, create_time, is_verdue)
+            values (#{order.orderNo}, #{order.orderType}, #{order.title}, #{order.content}, #{order.createTime}
+                   , #{order.isOverdue})
+    </insert>
+    <update id="update">
+        update tb_order
+        <set>
+            <if test="order.orderNo  != null and order.orderNo  != ''">
+                order_no = #{order.orderNo },
+            </if>
+            <if test="order.orderType  != null and order.orderType  != ''">
+                order_type = #{order.orderType },
+            </if>
+            <if test="order.title  != null and order.title  != ''">
+                title = #{order.title },
+            </if>
+            <if test="order.content  != null and order.content  != ''">
+                content = #{order.content },
+            </if>
+            <if test="order.handleDeptId  != null">
+                handle_dept_id = #{order.handleDeptId },
+            </if>
+            <if test="order.fenpaiTime  != null">
+                fenpai_time = #{order.fenpaiTime },
+            </if>
+
+            <if test="order.isOverdue  != null">
+                is_verdue = #{order.isOverdue },
+            </if>
+
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        delete from tb_order where id = #{id};
+    </delete>
+
+    <select id="searchList" resultMap="OrderMap">
+        select
+            id,
+            order_no,
+            order_type,
+            title,
+            content,
+            handle_dept_id,
+            create_time,
+            fenpai_time,
+            is_overdue
+        from tb_order where
+        <where>
+            <if test="param.orderNo != null and param.orderNo != '' ">
+                and order_no = #{param.orderNo}
+            </if>
+            <if test="param.orderType != null and param.orderType != '' ">
+                and order_type = #{param.orderType}
+            </if>
+
+        </where>
+        limit #{param.pageNum}, #{param.pageSize}
+    </select>
+
+    <select id="countList" resultMap="OrderMap">
+        select count(id) from tb_order where
+        <where>
+            <if test="param.orderNo != null and param.orderNo != '' ">
+                and order_no = #{param.orderNo}
+            </if>
+            <if test="param.orderType != null and param.orderType != '' ">
+                and order_type = #{param.orderType}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryById" resultMap="OrderMap">
+        SELECT id,
+               order_no,
+               order_type,
+               title,
+               content,
+               handle_dept_id,
+               create_time,
+               fenpai_time,
+               is_overdue
+        FROM tb_order WHERE id = #{id};
+    </select>
+    <select id="countByOrderNo" resultType="java.lang.Integer">
+        select count(id) from tb_order where order_no = #{orderNo};
+    </select>
+    <select id="queryByOrderNo" resultType="com.fx.demo.order.entity.Order">
+        SELECT id,
+               order_no,
+               order_type,
+               title,
+               content,
+               handle_dept_id,
+               create_time,
+               fenpai_time,
+               is_overdue
+        FROM tb_order WHERE order_no = #{orderNo};
+    </select>
+
+    <select id="searchByDeptId" resultMap="OrderMap">
+        SELECT *
+        FROM tb_order
+        WHERE MONTH(create_time) = #{month}
+          AND YEAR(create_time) = YEAR(CURDATE())
+          and handle_dept_id in
+        <foreach collection="deptIdList" item="deptId" close=")" open="(" separator=",">
+            #{deptId}
+        </foreach>
+        ;
+    </select>
+
+    <select id="searchByMonth" resultMap="OrderMap">
+        SELECT *
+        FROM tb_order
+        WHERE MONTH(create_time) = #{month}
+        AND YEAR(create_time) = YEAR(CURDATE())
+        ;
+    </select>
+
+
+</mapper>
+
